@@ -108,6 +108,7 @@ app.layout = html.Div([
         style_data_conditional=[
             {
                 'if': {
+                    'column_id': 'Price Signal',
                     'filter_query': '{Price Signal} contains "Near"'
                 },
                 'backgroundColor': 'yellow',
@@ -115,6 +116,7 @@ app.layout = html.Div([
             },
             {
                 'if': {
+                    'column_id': 'Volume Signal',
                     'filter_query': '{Volume Signal} contains "Volume Surge"'
                 },
                 'backgroundColor': 'green',
@@ -124,6 +126,7 @@ app.layout = html.Div([
         style_table={'height': '800px', 'overflowY': 'scroll'}
     )
 ])
+
 
 # Run the app
 if __name__ == '__main__':
