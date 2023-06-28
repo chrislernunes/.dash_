@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html, dash_table
 
-import math
 import pandas as pd
 import yfinance as yf
 
@@ -29,64 +28,50 @@ symbol_sgx = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOT
 # Initialize an empty DataFrame
 df = pd.DataFrame()
 
+
 # Fetch data for each stock symbol
 for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
     info = ticker.info
-    beta = "{:.2f}".format(info.get('beta')) if info.get('beta') is not None else None
-    marketcap = "{:.2f}".format(info.get('marketCap')) if info.get('marketCap') is not None else None
-    pe_ratio = "{:.2f}".format(info.get('trailingPE')) if info.get('trailingPE') is not None else None
-    high_52week = float("{:.2f}".format(info.get('fiftyTwoWeekHigh'))) if info.get('fiftyTwoWeekHigh') is not None else None
-    low_52week = float("{:.2f}".format(info.get('fiftyTwoWeekLow'))) if info.get('fiftyTwoWeekLow') is not None else None
-    price = "{:.2f}".format(ticker.history(period='1d')['Close'][-1]) if ticker.history(period='1d')['Close'][-1] is not None else None
-    open_price = "{:.2f}".format(ticker.history(period='1d')['Open'][-1]) if ticker.history(period='1d')['Open'][-1] is not None else None
-    high_price = "{:.2f}".format(ticker.history(period='1d')['High'][-1]) if ticker.history(period='1d')['High'][-1] is not None else None
-    low_price = "{:.2f}".format(ticker.history(period='1d')['Low'][-1]) if ticker.history(period='1d')['Low'][-1] is not None else None
-    change = "{:.2f}".format(ticker.history(period='1d')['Close'][-1] - ticker.history(period='1d')['Open'][-1]) if (
-        ticker.history(period='1d')['Close'][-1] is not None and ticker.history(period='1d')['Open'][-1] is not None
-    ) else None
+    beta = info.get('beta')
+    marketcap = info.get('marketCap')
+    pe_ratio = info.get('trailingPE')
+    high_52week = info.get('fiftyTwoWeekHigh')
+    low_52week = info.get('fiftyTwoWeekLow')
+    price = ticker.history(period='1d')['Close'][-1]
+    open_price = ticker.history(period='1d')['Open'][-1]
+    high_price = ticker.history(period='1d')['High'][-1]
+    low_price = ticker.history(period='1d')['Low'][-1]
+    change = round(ticker.history(period='1d')['Close'][-1] - ticker.history(period='1d')['Open'][-1], 2)
 
     # Determine if price is near 52-week high or low
     price_signal = ''
-    if price is not None and high_52week is not None and low_52week is not None:
-        if float(price) >= high_52week * 0.95 and float(price) <= high_52week * 1.05:
-            price_signal = 'Near 52-Week High'
-            high_52week = f'***{high_52week}***'
-        elif float(price) >= low_52week * 0.95 and float(price) <= low_52week * 1.05:
-            price_signal = 'Near 52-Week Low'
-            low_52week = f'***{low_52week}***'
+    if price >= high_52week * 0.95 and price <= high_52week * 1.05:
+        price_signal = 'Near 52-Week High'
+        high_52week = f'***{high_52week:.2f}***'
+    elif price >= low_52week * 0.95 and price <= low_52week * 1.05:
+        price_signal = 'Near 52-Week Low'
+        low_52week = f'***{low_52week:.2f}***'
 
     # Retrieve historical volume data for the last 3 days, 10 days, and 3 months
     history_daily = ticker.history(period='1d')
 
-    volume_daily = "{:.2f}".format(history_daily['Volume'][-1]) if history_daily['Volume'][-1] is not None else None
-    average_volume = "{:.2f}".format(info.get('averageVolume')) if info.get('averageVolume') is not None else None
+    volume_daily = history_daily['Volume'][-1]
+    average_volume = info.get('averageVolume')
 
     # Create a signal where 3-day volume exceeds 1-day volume
     volume_signal = 'No Signal'
-    if volume_daily is not None and average_volume is not None:
-        if float(volume_daily) > float(average_volume):
-            volume_signal = 'Volume Surge'
+    if volume_daily > average_volume:
+        volume_signal = 'Volume Surge'
 
-    df_temp = pd.DataFrame(
-        {
-            'Stock': stock,
-            'Open': open_price,
-            'High': high_price,
-            'Low': low_price,
-            'Close': price,
-            'Change': change,
-            'Beta': beta,
-            'Marketcap': marketcap,
-            'P/E Ratio': pe_ratio,
-            '52 Week High': high_52week,
-            '52 Week Low': low_52week,
-            'Volume (Daily)': volume_daily,
-            'Average Volume': average_volume,
-            'Price Signal': price_signal,
-            'Volume Signal': volume_signal,
-        }
-    )
+    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': change, 'Beta': [beta], 'Marketcap': [marketcap],
+                            'P/E Ratio': [pe_ratio],
+                            '52 Week High': [high_52week],
+                            '52 Week Low': [low_52week],
+                            'Volume (Daily)': [volume_daily],
+                            'Average Volume': [average_volume],
+                            'Price Signal': [price_signal],
+                            'Volume Signal': [volume_signal]})
     df = pd.concat([df, df_temp], ignore_index=True)
 
 # Create a Dash app
@@ -94,45 +79,47 @@ app = dash.Dash(__name__)
 server = app.server
 
 # Define the layout of the dashboard
-app.layout = html.Div(
-    [
-        html.H1('Long_Short_ Screener'),
-        dash_table.DataTable(
-            id='stock-table',
-            data=df.to_dict('records'),
-            columns=[
-                {'name': 'Stock', 'id': 'Stock'},
-                {'name': 'Open', 'id': 'Open'},
-                {'name': 'High', 'id': 'High'},
-                {'name': 'Low', 'id': 'Low'},
-                {'name': 'Close', 'id': 'Close'},
-                {'name': 'Change', 'id': 'Change'},
-                {'name': 'Beta', 'id': 'Beta'},
-                {'name': 'Marketcap', 'id': 'Marketcap'},
-                {'name': 'P/E Ratio', 'id': 'P/E Ratio'},
-                {'name': '52 Week High', 'id': '52 Week High'},
-                {'name': '52 Week Low', 'id': '52 Week Low'},
-                {'name': 'Volume (Daily)', 'id': 'Volume (Daily)'},
-                {'name': 'Average Volume', 'id': 'Average Volume'},
-                {'name': 'Price Signal', 'id': 'Price Signal'},
-                {'name': 'Volume Signal', 'id': 'Volume Signal'},
-            ],
-            style_data_conditional=[
-                {
-                    'if': {'filter_query': '{Price Signal} contains "***"'},
-                    'backgroundColor': 'yellow',
-                    'color': 'black',
+app.layout = html.Div([
+    html.H1('Long_Short_ Screener'),
+    dash_table.DataTable(
+        id='stock-table',
+        data=df.to_dict('records'),
+        columns=[
+            {'name': 'Stock', 'id': 'Stock'},
+            {'name': 'Open', 'id': 'Open'},
+            {'name': 'High', 'id': 'High'},
+            {'name': 'Low', 'id': 'Low'},
+            {'name': 'Close', 'id': 'Close'},
+            {'name': 'Change', 'id': 'Change'},
+            {'name': 'Beta', 'id': 'Beta'},
+            {'name': 'Marketcap', 'id': 'Marketcap'},
+            {'name': 'P/E Ratio', 'id': 'P/E Ratio'},
+            {'name': '52 Week High', 'id': '52 Week High'},
+            {'name': '52 Week Low', 'id': '52 Week Low'},
+            {'name': 'Volume (Daily)', 'id': 'Volume (Daily)'},
+            {'name': 'Average Volume', 'id': 'Average Volume'},
+            {'name': 'Price Signal', 'id': 'Price Signal'},
+            {'name': 'Volume Signal', 'id': 'Volume Signal'}
+        ],
+        style_data_conditional=[
+            {
+                'if': {
+                    'filter_query': '{Price Signal} contains "***"'
                 },
-                {
-                    'if': {'filter_query': '{Volume Signal} contains "Volume Surge"'},
-                    'backgroundColor': 'green',
-                    'color': 'white',
+                'backgroundColor': 'yellow',
+                'color': 'black',
+            },
+            {
+                'if': {
+                    'filter_query': '{Volume Signal} contains "Volume Surge"'
                 },
-            ],
-            style_table={'height': '800px', 'overflowY': 'scroll'},
-        ),
-    ]
-)
+                'backgroundColor': 'green',
+                'color': 'white',
+            }
+        ],
+        style_table={'height': '800px', 'overflowY': 'scroll'}
+    )
+])
 
 # Run the app
 if __name__ == '__main__':
