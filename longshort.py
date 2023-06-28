@@ -26,17 +26,18 @@ symbol_sgx = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOT
                'MGL.NS', 'NTPC.NS', 'SAIL.NS', 'SHRIRAMFIN.NS','TITAN.NS','TORNTPHARM.NS', 'INDIAMART.NS', 'CANBK.NS', 'LUPIN.NS', 'PAGEIND.NS',
                'ZYDUSLIFE.NS', 'SIEMENS.NS', 'ITC.NS', 'HDFCAMC.NS', 'VEDL.NS', 'IDEA.NS', 'MUTHOOTFIN.NS', 'PEL.NS'] 
 
+# Initialize an empty DataFrame
 df = pd.DataFrame()
 
 # Fetch data for each stock symbol
 for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
     info = ticker.info
-    beta = "{:.2f}".format(info.get('beta'))
-    marketcap = "{:.2f}".format(info.get('marketCap'))
-    pe_ratio = "{:.2f}".format(info.get('trailingPE'))
-    high_52week = float("{:.2f}".format(info.get('fiftyTwoWeekHigh')))
-    low_52week = float("{:.2f}".format(info.get('fiftyTwoWeekLow')))
+    beta = "{:.2f}".format(info.get('beta')) if info.get('beta') is not None and not math.isnan(info.get('beta')) else 'N/A'
+    marketcap = "{:.2f}".format(info.get('marketCap')) if info.get('marketCap') is not None and not math.isnan(info.get('marketCap')) else 'N/A'
+    pe_ratio = "{:.2f}".format(info.get('trailingPE')) if info.get('trailingPE') is not None and not math.isnan(info.get('trailingPE')) else 'N/A'
+    high_52week = float("{:.2f}".format(info.get('fiftyTwoWeekHigh'))) if info.get('fiftyTwoWeekHigh') is not None and not math.isnan(info.get('fiftyTwoWeekHigh')) else 'N/A'
+    low_52week = float("{:.2f}".format(info.get('fiftyTwoWeekLow'))) if info.get('fiftyTwoWeekLow') is not None and not math.isnan(info.get('fiftyTwoWeekLow')) else 'N/A'
     price = "{:.2f}".format(ticker.history(period='1d')['Close'][-1])
     open_price = "{:.2f}".format(ticker.history(period='1d')['Open'][-1])
     high_price = "{:.2f}".format(ticker.history(period='1d')['High'][-1])
@@ -45,18 +46,18 @@ for stock in symbol_sgx:
 
     # Determine if price is near 52-week high or low
     price_signal = ''
-    if float(price) >= high_52week * 0.95 and float(price) <= high_52week * 1.05:
+    if isinstance(high_52week, float) and high_52week * 0.95 <= float(price) <= high_52week * 1.05:
         price_signal = 'Near 52-Week High'
-        high_52week = f'***{high_52week:.2f}***'
-    elif float(price) >= low_52week * 0.95 and float(price) <= low_52week * 1.05:
+        high_52week = f'***{high_52week}***'
+    elif isinstance(low_52week, float) and low_52week * 0.95 <= float(price) <= low_52week * 1.05:
         price_signal = 'Near 52-Week Low'
-        low_52week = f'***{low_52week:.2f}***'
+        low_52week = f'***{low_52week}***'
 
     # Retrieve historical volume data for the last 3 days, 10 days, and 3 months
     history_daily = ticker.history(period='1d')
 
     volume_daily = "{:.2f}".format(history_daily['Volume'][-1])
-    average_volume = "{:.2f}".format(info.get('averageVolume'))
+    average_volume = "{:.2f}".format(info.get('averageVolume')) if info.get('averageVolume') is not None and not math.isnan(info.get('averageVolume')) else 'N/A'
 
     # Create a signal where 3-day volume exceeds 1-day volume
     volume_signal = 'No Signal'
