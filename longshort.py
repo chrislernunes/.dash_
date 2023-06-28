@@ -40,7 +40,6 @@ for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
     info = ticker.info
     beta = info.get('beta')
-    marketcap = info.get('marketCap')
     pe_ratio = info.get('trailingPE')
     high_52week = info.get('fiftyTwoWeekHigh')
     low_52week = info.get('fiftyTwoWeekLow')
@@ -70,7 +69,7 @@ for stock in symbol_sgx:
     if volume_daily > average_volume:
         volume_signal = 'Volume Surge'
 
-    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': change, 'Beta': [beta], 'Marketcap': [marketcap],
+    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': change, 'Beta': [beta],
                             'P/E Ratio': [pe_ratio],
                             '52 Week High': [high_52week],
                             '52 Week Low': [low_52week],
@@ -98,7 +97,6 @@ app.layout = html.Div([
             {'name': 'Close', 'id': 'Close'},
             {'name': 'Change', 'id': 'Change'},
             {'name': 'Beta', 'id': 'Beta'},
-            {'name': 'Marketcap', 'id': 'Marketcap'},
             {'name': 'P/E Ratio', 'id': 'P/E Ratio'},
             {'name': '52 Week High', 'id': '52 Week High'},
             {'name': '52 Week Low', 'id': '52 Week Low'},
