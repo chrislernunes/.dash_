@@ -33,6 +33,9 @@ stock_symbols = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOL
 stock_data_df = pd.DataFrame()
 
 
+
+
+
 for symbol in stock_symbols:
     stock_data = yf.download(symbol, start='2021-01-01', end='2023-06-26')
     stock_data["Symbol"] = symbol
@@ -55,9 +58,6 @@ moving_avg_df['50-day Distance'] = (moving_avg_df['50-day MA'] - moving_avg_df['
 moving_avg_df['150-day Distance'] = (moving_avg_df['150-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
 moving_avg_df['200-day Distance'] = (moving_avg_df['200-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
 
-# Format numerical columns with two decimal places
-moving_avg_df = moving_avg_df.round(2)
-
 above_below_df = pd.DataFrame(index=['Above', 'Below'])
 
 # Calculate the total stocks above and below each moving average
@@ -71,31 +71,72 @@ above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distanc
 app = dash.Dash(__name__)
 server = app.server
 
+# Define number formatting function
+def format_number(n):
+    return "{:.2f}".format(n)
+
 app.layout = html.Div(children=[
     html.H1('Moving Average Scanner'),
     html.H2('Price Distance From Moving Averages'),
     dash_table.DataTable(
         id='moving-averages-table',
         columns=[
-            {"name": col, "id": col, "type": "numeric", "format": ".2f"} for col in moving_avg_df.columns
+            {"name": col, "id": col, "type": "numeric", "format": format_number}
+            if col != "Symbol" else {"name": col, "id": col}
+            for col in moving_avg_df.columns
         ],
         data=moving_avg_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
         style_data_conditional=[
             {
                 'if': {
-                    'column_id': col,
-                    'filter_query': f'{{{col}}} < 0'
+                    'column_id': '10-day Distance',
+                    'filter_query': '{10-day Distance} < 0'
                 },
                 'backgroundColor': 'red',
                 'color': 'white',
-            } for col in moving_avg_df.columns if 'Distance' in col
+            },
+            {
+                'if': {
+                    'column_id': '20-day Distance',
+                    'filter_query': '{20-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '50-day Distance',
+                    'filter_query': '{50-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '150-day Distance',
+                    'filter_query': '{150-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '200-day Distance',
+                    'filter_query': '{200-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            }
         ]
     ),
     html.H2('Stocks Above and Below Moving Averages'),
     dash_table.DataTable(
         id='above-below-table',
-        columns=[{"name": col, "id": col} for col in above_below_df.columns],
+        columns=[
+            {"name": col, "id": col, "type": "numeric", "format": format_number}
+            for col in above_below_df.columns
+        ],
         data=above_below_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
     ),
