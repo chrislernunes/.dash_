@@ -33,6 +33,7 @@ stock_symbols = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOL
 stock_data_df = pd.DataFrame()
 
 
+
 for symbol in stock_symbols:
     stock_data = yf.download(symbol, start='2021-01-01', end='2023-06-26')
     stock_data["Symbol"] = symbol
