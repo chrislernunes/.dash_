@@ -75,6 +75,48 @@ app.layout = html.Div(children=[
         columns=[{"name": col, "id": col} for col in moving_avg_df.columns],
         data=moving_avg_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
+        style_data_conditional=[
+            {
+                'if': {
+                    'column_id': '10-day Distance',
+                    'filter_query': '{10-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '20-day Distance',
+                    'filter_query': '{20-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '50-day Distance',
+                    'filter_query': '{50-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '150-day Distance',
+                    'filter_query': '{150-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '200-day Distance',
+                    'filter_query': '{200-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            }
+        ]
     ),
     html.H2('Stocks Above and Below Moving Averages'),
     dash_table.DataTable(
