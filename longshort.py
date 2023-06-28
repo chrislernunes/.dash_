@@ -26,7 +26,6 @@ symbol_sgx = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOT
                'MGL.NS', 'NTPC.NS', 'SAIL.NS', 'SHRIRAMFIN.NS','TITAN.NS','TORNTPHARM.NS', 'INDIAMART.NS', 'CANBK.NS', 'LUPIN.NS', 'PAGEIND.NS',
                'ZYDUSLIFE.NS', 'SIEMENS.NS', 'ITC.NS', 'HDFCAMC.NS', 'VEDL.NS', 'IDEA.NS', 'MUTHOOTFIN.NS', 'PEL.NS'] 
 
-# Initialize an empty DataFrame
 df = pd.DataFrame()
 
 # Fetch data for each stock symbol
@@ -36,8 +35,8 @@ for stock in symbol_sgx:
     beta = "{:.2f}".format(info.get('beta'))
     marketcap = "{:.2f}".format(info.get('marketCap'))
     pe_ratio = "{:.2f}".format(info.get('trailingPE'))
-    high_52week = "{:.2f}".format(info.get('fiftyTwoWeekHigh'))
-    low_52week = "{:.2f}".format(info.get('fiftyTwoWeekLow'))
+    high_52week = float("{:.2f}".format(info.get('fiftyTwoWeekHigh')))
+    low_52week = float("{:.2f}".format(info.get('fiftyTwoWeekLow')))
     price = "{:.2f}".format(ticker.history(period='1d')['Close'][-1])
     open_price = "{:.2f}".format(ticker.history(period='1d')['Open'][-1])
     high_price = "{:.2f}".format(ticker.history(period='1d')['High'][-1])
@@ -46,22 +45,22 @@ for stock in symbol_sgx:
 
     # Determine if price is near 52-week high or low
     price_signal = ''
-    if price >= high_52week * 0.95 and price <= high_52week * 1.05:
+    if float(price) >= high_52week * 0.95 and float(price) <= high_52week * 1.05:
         price_signal = 'Near 52-Week High'
-        high_52week = f'***{high_52week}***'
-    elif price >= low_52week * 0.95 and price <= low_52week * 1.05:
+        high_52week = f'***{high_52week:.2f}***'
+    elif float(price) >= low_52week * 0.95 and float(price) <= low_52week * 1.05:
         price_signal = 'Near 52-Week Low'
-        low_52week = f'***{low_52week}***'
+        low_52week = f'***{low_52week:.2f}***'
 
     # Retrieve historical volume data for the last 3 days, 10 days, and 3 months
     history_daily = ticker.history(period='1d')
 
-    volume_daily = history_daily['Volume'][-1]
-    average_volume = info.get('averageVolume')
+    volume_daily = "{:.2f}".format(history_daily['Volume'][-1])
+    average_volume = "{:.2f}".format(info.get('averageVolume'))
 
     # Create a signal where 3-day volume exceeds 1-day volume
     volume_signal = 'No Signal'
-    if volume_daily > average_volume:
+    if float(volume_daily) > float(average_volume):
         volume_signal = 'Volume Surge'
 
     df_temp = pd.DataFrame({'Stock': stock, 'Open': open_price, 'High': high_price, 'Low': low_price, 'Close': price, 'Change': change, 'Beta': [beta], 'Marketcap': [marketcap],
