@@ -35,7 +35,6 @@ stock_data_df = pd.DataFrame()
 
 
 
-
 for symbol in stock_symbols:
     stock_data = yf.download(symbol, start='2021-01-01', end='2023-06-26')
     stock_data["Symbol"] = symbol
@@ -85,7 +84,7 @@ app.layout = html.Div(children=[
             if col != "Symbol" else {"name": col, "id": col}
             for col in moving_avg_df.columns
         ],
-        data=moving_avg_df.to_dict('records'),
+        data=moving_avg_df.round(2).to_dict('records'),
         style_cell={'textAlign': 'center'},
         style_data_conditional=[
             {
@@ -137,7 +136,7 @@ app.layout = html.Div(children=[
             {"name": col, "id": col, "type": "numeric", "format": format_number}
             for col in above_below_df.columns
         ],
-        data=above_below_df.to_dict('records'),
+        data=above_below_df.round(2).to_dict('records'),
         style_cell={'textAlign': 'center'},
     ),
 ])
