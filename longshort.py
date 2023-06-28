@@ -69,7 +69,7 @@ for stock in symbol_sgx:
     if volume_daily > average_volume:
         volume_signal = 'Volume Surge'
 
-    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': change, 'Beta': [beta],
+    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': round(change, 2), 'Beta': (beta, 2),
                             'P/E Ratio': [pe_ratio],
                             '52 Week High': [high_52week],
                             '52 Week Low': [low_52week],
