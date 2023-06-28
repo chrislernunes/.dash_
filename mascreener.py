@@ -42,13 +42,13 @@ for symbol in stock_symbols:
     stock_data_df = pd.concat([stock_data_df, stock_data], ignore_index=True)
 
 # Calculate the moving averages
-stock_data_df['10-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=10).mean().reset_index(0, drop=True)
-stock_data_df['20-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=20).mean().reset_index(0, drop=True)
-stock_data_df['50-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=50).mean().reset_index(0, drop=True)
-stock_data_df['150-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=150).mean().reset_index(0, drop=True)
-stock_data_df['200-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=200).mean().reset_index(0, drop=True)
+stock_data_df['10-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=10).mean().reset_index(0, drop=True).round(2)
+stock_data_df['20-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=20).mean().reset_index(0, drop=True).round(2)
+stock_data_df['50-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=50).mean().reset_index(0, drop=True).round(2)
+stock_data_df['150-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=150).mean().reset_index(0, drop=True).round(2)
+stock_data_df['200-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=200).mean().reset_index(0, drop=True).round(2)
 
-latest_data = stock_data_df.groupby('Symbol').tail(1)
+latest_data = stock_data_df.groupby('Symbol').tail(1).round(2)
 moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
 
 # Calculate the distance from each average to the current price as a percentage
