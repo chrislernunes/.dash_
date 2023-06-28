@@ -110,7 +110,7 @@ app.layout = html.Div([
         style_data_conditional=[
             {
                 'if': {
-                    'filter_query': '{Price Signal} contains "***"'
+                    'filter_query': '{Price Signal} contains "52 Week"'
                 },
                 'backgroundColor': 'yellow',
                 'color': 'black',
