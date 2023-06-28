@@ -1,7 +1,7 @@
 import dash
 from dash import dcc, html, dash_table
 
-
+import math
 import pandas as pd
 import yfinance as yf
 
