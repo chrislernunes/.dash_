@@ -32,6 +32,38 @@ stock_symbols = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOL
 
 stock_data_df = pd.DataFrame()
 
+
+for symbol in stock_symbols:
+    stock_data = yf.download(symbol, start='2021-01-01', end='2023-06-26')
+    stock_data["Symbol"] = symbol
+    stock_data_df = pd.concat([stock_data_df, stock_data], ignore_index=True)
+
+# Calculate the moving averages
+stock_data_df['10-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=10).mean().reset_index(0, drop=True)
+stock_data_df['20-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=20).mean().reset_index(0, drop=True)
+stock_data_df['50-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=50).mean().reset_index(0, drop=True)
+stock_data_df['150-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=150).mean().reset_index(0, drop=True)
+stock_data_df['200-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=200).mean().reset_index(0, drop=True)
+
+latest_data = stock_data_df.groupby('Symbol').tail(1)
+moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
+
+# Calculate the distance from each average to the current price as a percentage
+moving_avg_df['10-day Distance'] = (moving_avg_df['10-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
+moving_avg_df['20-day Distance'] = (moving_avg_df['20-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
+moving_avg_df['50-day Distance'] = (moving_avg_df['50-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
+moving_avg_df['150-day Distance'] = (moving_avg_df['150-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
+moving_avg_df['200-day Distance'] = (moving_avg_df['200-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
+
+above_below_df = pd.DataFrame(index=['Above', 'Below'])
+
+# Calculate the total stocks above and below each moving average
+above_below_df['10-day MA'] = [len(moving_avg_df[moving_avg_df['10-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['10-day Distance'] < 0])]
+above_below_df['20-day MA'] = [len(moving_avg_df[moving_avg_df['20-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['20-day Distance'] < 0])]
+above_below_df['50-day MA'] = [len(moving_avg_df[moving_avg_df['50-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['50-day Distance'] < 0])]
+above_below_df['150-day MA'] = [len(moving_avg_df[moving_avg_df['150-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['150-day Distance'] < 0])]
+above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['200-day Distance'] < 0])]
+
 # Create Dash application
 app = dash.Dash(__name__)
 server = app.server
@@ -105,3 +137,6 @@ app.layout = html.Div(children=[
         style_cell={'textAlign': 'center'},
     ),
 ])
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
