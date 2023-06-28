@@ -35,6 +35,7 @@ stock_data_df = pd.DataFrame()
 
 
 
+
 for symbol in stock_symbols:
     stock_data = yf.download(symbol, start='2021-01-01', end='2023-06-26')
     stock_data["Symbol"] = symbol
@@ -51,11 +52,11 @@ latest_data = stock_data_df.groupby('Symbol').tail(1)
 moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
 
 # Calculate the distance from each average to the current price as a percentage
-moving_avg_df['10-day Distance'] = (moving_avg_df['10-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
-moving_avg_df['20-day Distance'] = (moving_avg_df['20-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
-moving_avg_df['50-day Distance'] = (moving_avg_df['50-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
-moving_avg_df['150-day Distance'] = (moving_avg_df['150-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
-moving_avg_df['200-day Distance'] = (moving_avg_df['200-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
+moving_avg_df['10-day Distance'] = ((moving_avg_df['10-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['20-day Distance'] = ((moving_avg_df['20-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['50-day Distance'] = ((moving_avg_df['50-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['150-day Distance'] = ((moving_avg_df['150-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['200-day Distance'] = ((moving_avg_df['200-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100).round(2)
 
 above_below_df = pd.DataFrame(index=['Above', 'Below'])
 
@@ -70,21 +71,13 @@ above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distanc
 app = dash.Dash(__name__)
 server = app.server
 
-# Define number formatting function
-def format_number(n):
-    return "{:.2f}".format(n)
-
 app.layout = html.Div(children=[
     html.H1('Moving Average Scanner'),
     html.H2('Price Distance From Moving Averages'),
     dash_table.DataTable(
         id='moving-averages-table',
-        columns=[
-            {"name": col, "id": col, "type": "numeric", "format": format_number}
-            if col != "Symbol" else {"name": col, "id": col}
-            for col in moving_avg_df.columns
-        ],
-        data=moving_avg_df.round(2).to_dict('records'),
+        columns=[{"name": col, "id": col} for col in moving_avg_df.columns],
+        data=moving_avg_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
         style_data_conditional=[
             {
@@ -132,11 +125,8 @@ app.layout = html.Div(children=[
     html.H2('Stocks Above and Below Moving Averages'),
     dash_table.DataTable(
         id='above-below-table',
-        columns=[
-            {"name": col, "id": col, "type": "numeric", "format": format_number}
-            for col in above_below_df.columns
-        ],
-        data=above_below_df.round(2).to_dict('records'),
+        columns=[{"name": col, "id": col} for col in above_below_df.columns],
+        data=above_below_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
     ),
 ])
