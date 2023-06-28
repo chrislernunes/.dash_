@@ -63,11 +63,11 @@ moving_avg_df['200-day Distance'] = ((moving_avg_df['200-day MA'] - moving_avg_d
 above_below_df = pd.DataFrame(index=['Above', 'Below'])
 
 # Calculate the total stocks above and below each moving average
-above_below_df['10-day MA'] = [len(moving_avg_df[moving_avg_df['10-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['10-day Distance'] < 0])]
-above_below_df['20-day MA'] = [len(moving_avg_df[moving_avg_df['20-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['20-day Distance'] < 0])]
-above_below_df['50-day MA'] = [len(moving_avg_df[moving_avg_df['50-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['50-day Distance'] < 0])]
-above_below_df['150-day MA'] = [len(moving_avg_df[moving_avg_df['150-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['150-day Distance'] < 0])]
-above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distance'] > 0]), len(moving_avg_df[moving_avg_df['200-day Distance'] < 0])]
+above_below_df['10-day MA'] = [len(moving_avg_df[moving_avg_df['10-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['10-day Distance'] > 0])]
+above_below_df['20-day MA'] = [len(moving_avg_df[moving_avg_df['20-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['20-day Distance'] > 0])]
+above_below_df['50-day MA'] = [len(moving_avg_df[moving_avg_df['50-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['50-day Distance'] > 0])]
+above_below_df['150-day MA'] = [len(moving_avg_df[moving_avg_df['150-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['150-day Distance'] > 0])]
+above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['200-day Distance'] > 0])]
 
 # Create Dash application
 app = dash.Dash(__name__)
@@ -87,7 +87,7 @@ app.layout = html.Div(children=[
                     'column_id': '10-day Distance',
                     'filter_query': '{10-day Distance} < 0'
                 },
-                'backgroundColor': 'red',
+                'backgroundColor': 'grey',
                 'color': 'white',
             },
             {
@@ -95,7 +95,7 @@ app.layout = html.Div(children=[
                     'column_id': '20-day Distance',
                     'filter_query': '{20-day Distance} < 0'
                 },
-                'backgroundColor': 'red',
+                'backgroundColor': 'grey',
                 'color': 'white',
             },
             {
@@ -103,7 +103,7 @@ app.layout = html.Div(children=[
                     'column_id': '50-day Distance',
                     'filter_query': '{50-day Distance} < 0'
                 },
-                'backgroundColor': 'red',
+                'backgroundColor': 'grey',
                 'color': 'white',
             },
             {
@@ -111,7 +111,7 @@ app.layout = html.Div(children=[
                     'column_id': '150-day Distance',
                     'filter_query': '{150-day Distance} < 0'
                 },
-                'backgroundColor': 'red',
+                'backgroundColor': 'grey',
                 'color': 'white',
             },
             {
@@ -119,7 +119,7 @@ app.layout = html.Div(children=[
                     'column_id': '200-day Distance',
                     'filter_query': '{200-day Distance} < 0'
                 },
-                'backgroundColor': 'red',
+                'backgroundColor': 'grey',
                 'color': 'white',
             }
         ]
