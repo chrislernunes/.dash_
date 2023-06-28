@@ -1,4 +1,6 @@
 # Moving Average Screener
+# Created by Chrisler Nunes
+# 28th June 20023
 
 import yfinance as yf
 import pandas as pd
