@@ -65,6 +65,7 @@ above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distanc
 
 # Create Dash application
 app = dash.Dash(__name__)
+server = app.server
 
 app.layout = html.Div(children=[
     html.H1('Moving Average Scanner'),
