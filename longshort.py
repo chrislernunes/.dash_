@@ -33,16 +33,16 @@ df = pd.DataFrame()
 for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
     info = ticker.info
-    beta = info.get('beta')
-    marketcap = info.get('marketCap')
-    pe_ratio = info.get('trailingPE')
-    high_52week = info.get('fiftyTwoWeekHigh')
-    low_52week = info.get('fiftyTwoWeekLow')
-    price = ticker.history(period='1d')['Close'][-1]
-    open_price = ticker.history(period='1d')['Open'][-1]
-    high_price = ticker.history(period='1d')['High'][-1]
-    low_price = ticker.history(period='1d')['Low'][-1]
-    change = ticker.history(period='1d')['Close'][-1] - ticker.history(period='1d')['Open'][-1]
+    beta = "{:.2f}".format(info.get('beta'))
+    marketcap = "{:.2f}".format(info.get('marketCap'))
+    pe_ratio = "{:.2f}".format(info.get('trailingPE'))
+    high_52week = "{:.2f}".format(info.get('fiftyTwoWeekHigh'))
+    low_52week = "{:.2f}".format(info.get('fiftyTwoWeekLow'))
+    price = "{:.2f}".format(ticker.history(period='1d')['Close'][-1])
+    open_price = "{:.2f}".format(ticker.history(period='1d')['Open'][-1])
+    high_price = "{:.2f}".format(ticker.history(period='1d')['High'][-1])
+    low_price = "{:.2f}".format(ticker.history(period='1d')['Low'][-1])
+    change = "{:.2f}".format(ticker.history(period='1d')['Close'][-1] - ticker.history(period='1d')['Open'][-1])
 
     # Determine if price is near 52-week high or low
     price_signal = ''
