@@ -56,6 +56,9 @@ moving_avg_df['50-day Distance'] = (moving_avg_df['50-day MA'] - moving_avg_df['
 moving_avg_df['150-day Distance'] = (moving_avg_df['150-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
 moving_avg_df['200-day Distance'] = (moving_avg_df['200-day MA'] - moving_avg_df['Close']) / moving_avg_df['Close'] * 100
 
+# Format numerical columns with two decimal places
+moving_avg_df = moving_avg_df.round(2)
+
 above_below_df = pd.DataFrame(index=['Above', 'Below'])
 
 # Calculate the total stocks above and below each moving average
@@ -74,12 +77,7 @@ app.layout = html.Div(children=[
     html.H2('Price Distance From Moving Averages'),
     dash_table.DataTable(
         id='moving-averages-table',
-        columns=[
-            {"name": col, "id": col, "type": "numeric", "format": Format(precision=2, scheme=Scheme.fixed)}
-            if col.endswith("Distance")
-            else {"name": col, "id": col}
-            for col in moving_avg_df.columns
-        ],
+        columns=[{"name": col, "id": col, "type": "numeric", "format": ".2f"} for col in moving_avg_df.columns],
         data=moving_avg_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
         style_data_conditional=[
@@ -128,12 +126,7 @@ app.layout = html.Div(children=[
     html.H2('Stocks Above and Below Moving Averages'),
     dash_table.DataTable(
         id='above-below-table',
-        columns=[
-            {"name": col, "id": col, "type": "numeric", "format": Format(precision=2, scheme=Scheme.fixed)}
-            if col.endswith("MA")
-            else {"name": col, "id": col}
-            for col in above_below_df.columns
-        ],
+        columns=[{"name": col, "id": col} for col in above_below_df.columns],
         data=above_below_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
     ),
