@@ -111,8 +111,8 @@ app.layout = html.Div([
                     'column_id': 'Price Signal',
                     'filter_query': '{Price Signal} contains "Near"'
                 },
-                'backgroundColor': 'yellow',
-                'color': 'black',
+                'backgroundColor': 'blue',
+                'color': 'white',
             },
             {
                 'if': {
