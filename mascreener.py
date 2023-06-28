@@ -87,7 +87,7 @@ app.layout = html.Div(children=[
                     'column_id': '10-day Distance',
                     'filter_query': '{10-day Distance} < 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'red',
                 'color': 'white',
             },
             {
@@ -95,7 +95,7 @@ app.layout = html.Div(children=[
                     'column_id': '20-day Distance',
                     'filter_query': '{20-day Distance} < 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'red',
                 'color': 'white',
             },
             {
@@ -103,7 +103,7 @@ app.layout = html.Div(children=[
                     'column_id': '50-day Distance',
                     'filter_query': '{50-day Distance} < 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'red',
                 'color': 'white',
             },
             {
@@ -111,7 +111,7 @@ app.layout = html.Div(children=[
                     'column_id': '150-day Distance',
                     'filter_query': '{150-day Distance} < 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'red',
                 'color': 'white',
             },
             {
@@ -119,7 +119,7 @@ app.layout = html.Div(children=[
                     'column_id': '200-day Distance',
                     'filter_query': '{200-day Distance} < 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'red',
                 'color': 'white',
             }
         ]
