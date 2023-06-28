@@ -76,6 +76,7 @@ for stock in symbol_sgx:
 
 # Create a Dash app
 app = dash.Dash(__name__)
+server - app.server
 
 # Define the layout of the dashboard
 app.layout = html.Div([
