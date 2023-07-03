@@ -1,6 +1,6 @@
 ## Abstract
 
-The above project is a stock analysis dashboard built using Dash, a Python framework for creating web applications. The purpose of the application is to fetch and display stock data for a list of predefined stock symbols from Yahoo Finance. It provides an interactive dashboard where users can view various stock metrics and signals for each stock.
+The above project is a stock analysis dashboard built using Dash, a Python framework for creating web applications. The purpose of the application is to fetch and display stock data for a list of all FNO stock symbols. It provides an interactive dashboard where users can view various stock metrics and signals for each stock.
 
 
 ### The main features of the dashboard include:
