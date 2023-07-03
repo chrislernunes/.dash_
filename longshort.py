@@ -39,8 +39,6 @@ df = pd.DataFrame()
 for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
     info = ticker.info
-    beta = info.get('beta')
-    pe_ratio = info.get('trailingPE')
     high_52week = info.get('fiftyTwoWeekHigh')
     low_52week = info.get('fiftyTwoWeekLow')
     price = ticker.history(period='1d')['Close'][-1]
@@ -95,8 +93,6 @@ app.layout = html.Div([
             {'name': 'Low', 'id': 'Low'},
             {'name': 'Close', 'id': 'Close'},
             {'name': 'Change', 'id': 'Change'},
-            {'name': 'Beta', 'id': 'Beta'},
-            {'name': 'P/E Ratio', 'id': 'P/E Ratio'},
             {'name': '52 Week High', 'id': '52 Week High'},
             {'name': '52 Week Low', 'id': '52 Week Low'},
             {'name': 'Volume (Daily)', 'id': 'Volume (Daily)'},
