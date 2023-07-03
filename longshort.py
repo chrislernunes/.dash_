@@ -53,10 +53,10 @@ for stock in symbol_sgx:
     price_signal = ''
     if price >= high_52week * 0.95 and price <= high_52week * 1.05:
         price_signal = 'Near 52-Week High'
-        high_52week = f'***{high_52week:.2f}***'
+        high_52week = f'**{high_52week:.2f}**'
     elif price >= low_52week * 0.95 and price <= low_52week * 1.05:
         price_signal = 'Near 52-Week Low'
-        low_52week = f'***{low_52week:.2f}***'
+        low_52week = f'**{low_52week:.2f}**'
 
     # Retrieve historical volume data for the last 3 days, 10 days, and 3 months
     history_daily = ticker.history(period='1d')
@@ -69,8 +69,7 @@ for stock in symbol_sgx:
     if volume_daily > average_volume:
         volume_signal = 'Volume Surge'
 
-    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': change, 'Beta': [beta],
-                            'P/E Ratio': [pe_ratio],
+    df_temp = pd.DataFrame({'Stock': stock, 'Open': round(open_price, 2), 'High': round(high_price, 2), 'Low': round(low_price, 2), 'Close': round(price, 2), 'Change': change,
                             '52 Week High': [high_52week],
                             '52 Week Low': [low_52week],
                             'Volume (Daily)': [volume_daily],
