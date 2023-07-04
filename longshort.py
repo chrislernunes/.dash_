@@ -37,14 +37,13 @@ df = pd.DataFrame()
 
 
 start_date = '2023-06-01'
-end_date = '2023-07-01'
+
 
 for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
 
     # Fetch historical data for the specified date range
-    history_daily = ticker.history(period='1d', start=start_date, end=end_date)
-
+    history_daily = ticker.history(period='1d', start=start_date)
     info = ticker.info
     high_52week = info.get('fiftyTwoWeekHigh')
     low_52week = info.get('fiftyTwoWeekLow')
