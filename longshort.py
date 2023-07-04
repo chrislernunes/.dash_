@@ -6,11 +6,10 @@
 
 import dash
 from dash import dcc, html, dash_table
-import datetime as dt
+
+
 import pandas as pd
 import yfinance as yf
-
-start_date = datetime.datetime(2023, 6, 1)
 
 # Define the list of stock symbols
 symbol_sgx = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOTYRE.NS', 'ABFRL.NS', 'AUROPHARMA.NS', 'BANDHANBNK.NS','ABBOTINDIA.NS', 'AXISBANK.NS', 'BATAINDIA.NS', 'BEL.NS', 
@@ -37,9 +36,15 @@ symbol_sgx = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOT
 df = pd.DataFrame()
 
 
-# Fetch data for each stock symbol
+start_date = '2023-06-01'
+end_date = '2023-07-01'
+
 for stock in symbol_sgx:
     ticker = yf.Ticker(stock)
+
+    # Fetch historical data for the specified date range
+    history_daily = ticker.history(period='1d', start=start_date, end=end_date)
+
     info = ticker.info
     high_52week = info.get('fiftyTwoWeekHigh')
     low_52week = info.get('fiftyTwoWeekLow')
