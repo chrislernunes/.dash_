@@ -46,7 +46,7 @@ stock_data_df['150-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(w
 stock_data_df['200-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=200).mean().reset_index(0, drop=True).round(2)
 
 latest_data = stock_data_df.groupby('Symbol').tail(1).round(2)
-moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
+moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
 
 # Calculate the distance from each average to the current price as a percentage
 moving_avg_df['10-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['10-day MA']) / moving_avg_df['Close'] * 100).round(2)
@@ -90,7 +90,7 @@ app.layout = html.Div(children=[
                     'column_id': '10-day Distance',
                     'filter_query': '{10-day Distance} >= 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'blue',
                 'color': 'white',
             },
             {
@@ -106,7 +106,7 @@ app.layout = html.Div(children=[
                     'column_id': '20-day Distance',
                     'filter_query': '{20-day Distance} >= 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'blue',
                 'color': 'white',
             },
             {
@@ -122,7 +122,7 @@ app.layout = html.Div(children=[
                     'column_id': '50-day Distance',
                     'filter_query': '{50-day Distance} >= 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'blue',
                 'color': 'white',
             },
             {
@@ -138,7 +138,7 @@ app.layout = html.Div(children=[
                     'column_id': '150-day Distance',
                     'filter_query': '{150-day Distance} >= 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'blue',
                 'color': 'white',
             },
             {
@@ -154,7 +154,7 @@ app.layout = html.Div(children=[
                     'column_id': '200-day Distance',
                     'filter_query': '{200-day Distance} >= 0'
                 },
-                'backgroundColor': 'green',
+                'backgroundColor': 'blue',
                 'color': 'white',
             }
         ]
