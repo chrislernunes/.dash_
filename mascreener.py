@@ -90,7 +90,7 @@ app.layout = html.Div(children=[
                     'column_id': '10-day Distance',
                     'filter_query': '{10-day Distance} >= 0'
                 },
-                'backgroundColor': 'blue',
+                'backgroundColor': 'green',
                 'color': 'white',
             },
             {
@@ -106,7 +106,7 @@ app.layout = html.Div(children=[
                     'column_id': '20-day Distance',
                     'filter_query': '{20-day Distance} >= 0'
                 },
-                'backgroundColor': 'blue',
+                'backgroundColor': 'green',
                 'color': 'white',
             },
             {
@@ -122,7 +122,7 @@ app.layout = html.Div(children=[
                     'column_id': '50-day Distance',
                     'filter_query': '{50-day Distance} >= 0'
                 },
-                'backgroundColor': 'blue',
+                'backgroundColor': 'green',
                 'color': 'white',
             },
             {
@@ -138,7 +138,7 @@ app.layout = html.Div(children=[
                     'column_id': '150-day Distance',
                     'filter_query': '{150-day Distance} >= 0'
                 },
-                'backgroundColor': 'blue',
+                'backgroundColor': 'green',
                 'color': 'white',
             },
             {
@@ -154,10 +154,19 @@ app.layout = html.Div(children=[
                     'column_id': '200-day Distance',
                     'filter_query': '{200-day Distance} >= 0'
                 },
-                'backgroundColor': 'blue',
+                'backgroundColor': 'green',
                 'color': 'white',
             }
-        ]
+        ],
+        sort_action='native',
+        sort_mode='single',
+        sort_by=[
+            {
+                'column_id': '10-day Distance',
+                'direction': 'asc',
+            }
+        ],
+        sort_as_null=True,
     ),
     html.H2('Stocks Above and Below Moving Averages'),
     dash_table.DataTable(
