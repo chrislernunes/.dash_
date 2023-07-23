@@ -79,6 +79,21 @@ page1_layout = html.Div([
     ),
 ])
 
+# Define the get_stock_data function
+def get_stock_data(ticker):
+    stock = yf.Ticker(ticker)
+    data = stock.history(period="2y")
+    data['3 Day Avg Volume'] = data['Volume'].rolling(window=3).mean().fillna(0).round().astype(int)
+    data['Weekly Avg Volume'] = data['Volume'].rolling(window=5).mean().fillna(0).round().astype(int)
+    data['Monthly Avg Volume'] = data['Volume'].rolling(window=20).mean().fillna(0).round().astype(int)
+    data['Yearly Avg Volume'] = data['Volume'].rolling(window=252).mean().fillna(0).round().astype(int)
+    data['Ticker'] = ticker
+
+    # Calculate the change percentage and add it as a new column, rounded to 2 decimal points
+    data['Change %'] = (data['Close'].pct_change() * 100).fillna(0).round(2)
+
+    return data[['Ticker', 'Open', 'High', 'Low', 'Close', 'Change %', 'Volume', '3 Day Avg Volume', 'Weekly Avg Volume', 'Monthly Avg Volume', 'Yearly Avg Volume']]
+
 # Page 2 Layout
 # List of stock tickers (Feel free to add more or remove as needed)
 stock_tickers = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOTYRE.NS', 'ABFRL.NS', 'AUROPHARMA.NS', 'BANDHANBNK.NS', 'ABBOTINDIA.NS', 'AXISBANK.NS']
