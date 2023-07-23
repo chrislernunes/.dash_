@@ -5,9 +5,6 @@ import dash
 from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output
 
-# Set the option to display all rows
-pd.set_option('display.max_rows', None)
-
 # Function to fetch stock data
 def get_stock_data(ticker):
     stock = yf.Ticker(ticker)
@@ -53,6 +50,42 @@ def highlight_crossing(s):
 # Apply the highlight function to the DataFrame
 highlighted_stocks_data = all_stocks_data.style.apply(highlight_crossing, axis=1)
 
+# Fetch stock data for moving averages
+stock_symbols = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOTYRE.NS', 'ABFRL.NS', 'AUROPHARMA.NS', 'BANDHANBNK.NS','ABBOTINDIA.NS', 'AXISBANK.NS']
+
+stock_data_df = pd.DataFrame()
+
+for symbol in stock_symbols:
+    stock_data = yf.download(symbol, start='2022-06-01')
+    stock_data["Symbol"] = symbol
+    stock_data_df = pd.concat([stock_data_df, stock_data], ignore_index=True)
+
+# Calculate the moving averages
+stock_data_df['10-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=10).mean().reset_index(0, drop=True).round(2)
+stock_data_df['20-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=20).mean().reset_index(0, drop=True).round(2)
+stock_data_df['50-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=50).mean().reset_index(0, drop=True).round(2)
+stock_data_df['150-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=150).mean().reset_index(0, drop=True).round(2)
+stock_data_df['200-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=200).mean().reset_index(0, drop=True).round(2)
+
+latest_data = stock_data_df.groupby('Symbol').tail(1).round(2)
+moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
+
+# Calculate the distance from each average to the current price as a percentage
+moving_avg_df['10-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['10-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['20-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['20-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['50-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['50-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['150-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['150-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['200-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['200-day MA']) / moving_avg_df['Close'] * 100).round(2)
+
+above_below_df = pd.DataFrame(index=['Above', 'Below'])
+
+# Calculate the total stocks above and below each moving average
+above_below_df['10-day MA'] = [len(moving_avg_df[moving_avg_df['10-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['10-day Distance'] >= 0])]
+above_below_df['20-day MA'] = [len(moving_avg_df[moving_avg_df['20-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['20-day Distance'] >= 0])]
+above_below_df['50-day MA'] = [len(moving_avg_df[moving_avg_df['50-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['50-day Distance'] >= 0])]
+above_below_df['150-day MA'] = [len(moving_avg_df[moving_avg_df['150-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['150-day Distance'] >= 0])]
+above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['200-day Distance'] >= 0])]
+
 # Create Dash application
 app = dash.Dash(__name__)
 server = app.server
@@ -67,7 +100,86 @@ page1_layout = html.Div([
         data=moving_avg_df.to_dict('records'),
         style_cell={'textAlign': 'center'},
         style_data_conditional=[
-            # Add your conditional styles here for moving averages distances
+            {
+                'if': {
+                    'column_id': '10-day Distance',
+                    'filter_query': '{10-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '10-day Distance',
+                    'filter_query': '{10-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '20-day Distance',
+                    'filter_query': '{20-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '20-day Distance',
+                    'filter_query': '{20-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '50-day Distance',
+                    'filter_query': '{50-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '50-day Distance',
+                    'filter_query': '{50-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '150-day Distance',
+                    'filter_query': '{150-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '150-day Distance',
+                    'filter_query': '{150-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '200-day Distance',
+                    'filter_query': '{200-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '200-day Distance',
+                    'filter_query': '{200-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            }
         ],
         sort_action='native',
         sort_mode='single',
@@ -94,28 +206,51 @@ page2_layout = html.Div([
     dash_table.DataTable(
         id='stock-data-table',
         columns=[{"name": col, "id": col} for col in all_stocks_data.columns],
-        data=all_stocks_data.to_dict('records'),  # Use the DataFrame instead of the Styler object
+        data=all_stocks_data.to_dict('records'),
         style_cell={'textAlign': 'center'},
+        style_data_conditional=[
+            {
+                'if': {
+                    'column_id': 'Change %',
+                    'filter_query': '{Change %} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': 'Change %',
+                    'filter_query': '{Change %} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+        ],
+        sort_action='native',
+        sort_mode='single',
+        sort_by=[
+            {
+                'column_id': 'Ticker',
+                'direction': 'asc',
+            }
+        ],
+        sort_as_null=True,
     ),
 ])
 
-# Define callbacks for each page
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
-def display_page(pathname):
-    if pathname == '/page-1':
-        return page1_layout
-    elif pathname == '/page-2':
-        return page2_layout
-    else:
-        return page1_layout  # Set page1_layout as the default page
-
-# Create the main layout of the app
+# Main app layout
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
 
+# Callback to update the page based on the URL
+@app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname == '/page-1':
+        return page1_layout
+    else:
+        return page2_layout
+
 if __name__ == '__main__':
     app.run_server(debug=True)
-
