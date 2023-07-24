@@ -1,3 +1,5 @@
+import dash
+from dash import html, dcc
 import yfinance as yf
 import pandas as pd
 
@@ -27,7 +29,7 @@ all_stocks_data = pd.DataFrame()
 # Fetch data for each stock and append it to the DataFrame
 for ticker in stock_tickers:
     stock_data = get_stock_data(ticker)
-    all_stocks_data = all_stocks_data.append(stock_data.iloc[-1])
+    all_stocks_data = all_stocks_data._append(stock_data.iloc[-1])
 
 # Reset the index of the DataFrame
 all_stocks_data.reset_index(inplace=True, drop=True)
@@ -36,17 +38,34 @@ all_stocks_data.reset_index(inplace=True, drop=True)
 def highlight_crossing(s):
     crossing_styles = [''] * len(s)
     if s['Volume'] > s['3 Day Avg Volume']:
-        crossing_styles[5] = 'color: green;'
+        crossing_styles[6] = 'color: green;'
     if s['Volume'] > s['Weekly Avg Volume']:
-        crossing_styles[6] = 'color: orange;'
+        crossing_styles[7] = 'color: orange;'
     if s['Volume'] > s['Monthly Avg Volume']:
-        crossing_styles[7] = 'color: blue;'
+        crossing_styles[8] = 'color: blue;'
     if s['Volume'] > s['Yearly Avg Volume']:
-        crossing_styles[8] = 'color: red;'
+        crossing_styles[9] = 'color: red;'
     return crossing_styles
 
 # Apply the highlight function to the DataFrame
-highlighted_stocks_data = all_stocks_data.style.apply(highlight_crossing, axis=1)
+highlighted_stocks_data = all_stocks_data.style.apply(highlight_crossing, axis=1).set_table_styles([{
+    'selector': 'td',
+    'props': [
+        ('border-collapse', 'collapse'),
+        ('border', '1px solid gray'),
+        ('padding', '8px'),
+        ('text-align', 'left')
+    ]
+}])
 
-# Display the table with highlighted crossing volume values
-display(highlighted_stocks_data)
+# Create the Dash app
+app = dash.Dash(__name__)
+
+# Define the layout of the app
+app.layout = html.Div([
+    dcc.Markdown(children=highlighted_stocks_data.to_html(escape=False))
+])
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)
