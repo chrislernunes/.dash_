@@ -1,5 +1,5 @@
 import dash
-from dash import html, dash_table
+from dash import html, dash_table, dcc
 import yfinance as yf
 import pandas as pd
 
