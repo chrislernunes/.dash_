@@ -44,6 +44,14 @@ all_stocks_data['50-day Distance'] = ((all_stocks_data['Close'] - all_stocks_dat
 all_stocks_data['150-day Distance'] = ((all_stocks_data['Close'] - all_stocks_data['150-day MA']) / all_stocks_data['Close'] * 100).round(2)
 all_stocks_data['200-day Distance'] = ((all_stocks_data['Close'] - all_stocks_data['200-day MA']) / all_stocks_data['Close'] * 100).round(2)
 
+# Calculate the total stocks above and below each moving average
+above_below_df = pd.DataFrame(index=['Above', 'Below'])
+above_below_df['10-day MA'] = [len(all_stocks_data[all_stocks_data['10-day Distance'] < 0]), len(all_stocks_data[all_stocks_data['10-day Distance'] >= 0])]
+above_below_df['20-day MA'] = [len(all_stocks_data[all_stocks_data['20-day Distance'] < 0]), len(all_stocks_data[all_stocks_data['20-day Distance'] >= 0])]
+above_below_df['50-day MA'] = [len(all_stocks_data[all_stocks_data['50-day Distance'] < 0]), len(all_stocks_data[all_stocks_data['50-day Distance'] >= 0])]
+above_below_df['150-day MA'] = [len(all_stocks_data[all_stocks_data['150-day Distance'] < 0]), len(all_stocks_data[all_stocks_data['150-day Distance'] >= 0])]
+above_below_df['200-day MA'] = [len(all_stocks_data[all_stocks_data['200-day Distance'] < 0]), len(all_stocks_data[all_stocks_data['200-day Distance'] >= 0])]
+
 # Create Dash application
 app = dash.Dash(__name__)
 server = app.server
