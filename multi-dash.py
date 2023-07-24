@@ -51,8 +51,9 @@ highlighted_stocks_data = all_stocks_data.style.apply(highlight_crossing, axis=1
 # Extract data from the Styler object and convert to DataFrame
 highlighted_stocks_data_df = highlighted_stocks_data.data
 
-# Initialize Dash app
+# Create Dash application
 app = dash.Dash(__name__)
+server = app.server
 
 # Dash layout
 app.layout = html.Div([
