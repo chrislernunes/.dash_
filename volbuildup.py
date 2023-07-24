@@ -53,8 +53,9 @@ def highlight_crossing(s):
 # Apply the highlight function to the DataFrame
 highlighted_stocks_data = all_stocks_data.style.apply(highlight_crossing, axis=1)
 
-# Create the Dash app
+# Create a Dash app
 app = dash.Dash(__name__)
+server = app.server
 
 # Define the layout of the app
 app.layout = html.Div([
