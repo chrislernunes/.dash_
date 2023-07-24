@@ -35,7 +35,7 @@ all_stocks_data = pd.DataFrame()
 # Fetch data for each stock and append it to the DataFrame
 for ticker in stock_tickers:
     stock_data = get_stock_data(ticker)
-    all_stocks_data = all_stocks_data._append(stock_data.iloc[-1], ignore_index=True)
+    all_stocks_data = all_stocks_data.append(stock_data.iloc[-1], ignore_index=True)
 
 # Function to highlight crossing volume values in green font
 def highlight_crossing(s):
