@@ -58,7 +58,7 @@ app = dash.Dash(__name__)
 
 # Define the layout of the app
 app.layout = html.Div([
-    html.H1("Stock Data Table"),  # Add the title
+    html.H1("Volume Buildup Screener"),  # Add the title
     dash_table.DataTable(
         id='stock-table',
         columns=[{'name': col, 'id': col} for col in highlighted_stocks_data.columns],
