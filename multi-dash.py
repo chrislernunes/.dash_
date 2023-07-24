@@ -207,9 +207,9 @@ app.layout = html.Div(children=[
     dash_table.DataTable(
         id='stock-data-table',
         columns=[{"name": col, "id": col} for col in highlighted_stocks_data.columns],
-        data=highlighted_stocks_data.to_dict('records'),
+        data=highlighted_stocks_data.data.to_dict('records'),  # Use .data to get the underlying DataFrame
         style_cell={'textAlign': 'center', 'padding': '5px'},
-        style_data_conditional=highlighted_stocks_data.data,
+        style_data_conditional=highlighted_stocks_data.data,   # Apply the styles to the underlying DataFrame
     ),
 ])
 
