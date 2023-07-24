@@ -94,14 +94,14 @@ server = app.server
 
 app.layout = html.Div(children=[
     html.H1('Stock Dashboard', style={'textAlign': 'center'}),
-
-    html.H2('Moving Average Scanner', style={'textAlign': 'center'}),
+    
+    # Moving Average Table
     html.H2('Price Distance From Moving Averages', style={'textAlign': 'center'}),
     dash_table.DataTable(
         id='moving-averages-table',
         columns=[{"name": col, "id": col} for col in moving_avg_df.columns],
         data=moving_avg_df.to_dict('records'),
-        style_cell={'textAlign': 'center', 'padding': '5px'},
+        style_cell={'textAlign': 'center'},
         style_data_conditional=[
             {
                 'if': {
@@ -195,23 +195,54 @@ app.layout = html.Div(children=[
         sort_as_null=True,
     ),
 
+    # Stocks Above and Below Moving Averages Table
     html.H2('Stocks Above and Below Moving Averages', style={'textAlign': 'center'}),
     dash_table.DataTable(
         id='above-below-table',
         columns=[{"name": col, "id": col} for col in above_below_df.columns],
         data=above_below_df.to_dict('records'),
-        style_cell={'textAlign': 'center', 'padding': '5px'},
+        style_cell={'textAlign': 'center'},
     ),
-
+    
+    # Stock Ticker Dropdown and Data Table
+    html.H2('Select a Stock Ticker', style={'textAlign': 'center'}),
+    dcc.Dropdown(
+        id='stock-ticker-dropdown',
+        options=[{'label': ticker, 'value': ticker} for ticker in stock_tickers],
+        value=stock_tickers[0]
+    ),
     html.H2('Stock Data', style={'textAlign': 'center'}),
     dash_table.DataTable(
         id='stock-data-table',
-        columns=[{"name": col, "id": col} for col in highlighted_stocks_data.columns],
-        data=highlighted_stocks_data.data.to_dict('records'),  # Use .data to get the underlying DataFrame
-        style_cell={'textAlign': 'center', 'padding': '5px'},
-        style_data_conditional=highlighted_stocks_data.data,   # Apply the styles to the underlying DataFrame
+        columns=[{"name": col, "id": col} for col in all_stocks_data.columns],
+        data=all_stocks_data.to_dict('records'),
+        style_cell={'textAlign': 'center'},
+        style_data_conditional=[
+            {
+                'if': {'column_id': 'Change %', 'filter_query': '{Change %} > 0'},
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {'column_id': 'Change %', 'filter_query': '{Change %} < 0'},
+                'backgroundColor': 'red',
+                'color': 'white',
+            }
+        ],
+        sort_action='native',
+        sort_mode='single',
+        sort_by=[{'column_id': 'Ticker', 'direction': 'asc'}],
+        sort_as_null=True,
     ),
 ])
+
+@app.callback(
+    Output('stock-data-table', 'data'),
+    Input('stock-ticker-dropdown', 'value')
+)
+def update_stock_data(selected_ticker):
+    updated_data = get_stock_data(selected_ticker)
+    return updated_data.to_dict('records')
 
 if __name__ == '__main__':
     app.run_server(debug=True)
