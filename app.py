@@ -63,7 +63,18 @@ app = dash.Dash(__name__)
 
 # Define the layout of the app
 app.layout = html.Div([
-    dcc.Markdown(children=highlighted_stocks_data.to_html(escape=False))
+    html_comp.Table(
+        # Convert the highlighted_stocks_data DataFrame to HTML
+        dangerously_allow_html=True,
+        children=html_comp.Tr(
+            [html_comp.Th(col) for col in highlighted_stocks_data.columns]
+        ) +
+        [
+            html_comp.Tr(
+                [html_comp.Td(val) for val in row[1:]]
+            ) for row in highlighted_stocks_data.iterrows()
+        ]
+    )
 ])
 
 # Run the app
