@@ -244,5 +244,10 @@ def update_stock_data(selected_ticker):
     updated_data = get_stock_data(selected_ticker)
     return updated_data.to_dict('records')
 
+server = app.server
+
+# Replace the app object with the server object
+application = server
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    application.run(debug=True)
