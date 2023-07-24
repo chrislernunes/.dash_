@@ -5,6 +5,42 @@ import dash
 from dash import dcc, html, dash_table
 from dash.dependencies import Input, Output
 
+# Fetch stock data
+stock_symbols = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOLLOTYRE.NS', 'ABFRL.NS', 'AUROPHARMA.NS', 'BANDHANBNK.NS','ABBOTINDIA.NS', 'AXISBANK.NS', 'BATAINDIA.NS', 'BEL.NS']
+
+stock_data_df = pd.DataFrame()
+
+for symbol in stock_symbols:
+    stock_data = yf.download(symbol, start='2022-06-01')
+    stock_data["Symbol"] = symbol
+    stock_data_df = pd.concat([stock_data_df, stock_data], ignore_index=True)
+
+# Calculate the moving averages
+stock_data_df['10-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=10).mean().reset_index(0, drop=True).round(2)
+stock_data_df['20-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=20).mean().reset_index(0, drop=True).round(2)
+stock_data_df['50-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=50).mean().reset_index(0, drop=True).round(2)
+stock_data_df['150-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=150).mean().reset_index(0, drop=True).round(2)
+stock_data_df['200-day MA'] = stock_data_df.groupby('Symbol')['Close'].rolling(window=200).mean().reset_index(0, drop=True).round(2)
+
+latest_data = stock_data_df.groupby('Symbol').tail(1).round(2)
+moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
+
+# Calculate the distance from each average to the current price as a percentage
+moving_avg_df['10-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['10-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['20-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['20-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['50-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['50-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['150-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['150-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df['200-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['200-day MA']) / moving_avg_df['Close'] * 100).round(2)
+
+above_below_df = pd.DataFrame(index=['Above', 'Below'])
+
+# Calculate the total stocks above and below each moving average
+above_below_df['10-day MA'] = [len(moving_avg_df[moving_avg_df['10-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['10-day Distance'] >= 0])]
+above_below_df['20-day MA'] = [len(moving_avg_df[moving_avg_df['20-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['20-day Distance'] >= 0])]
+above_below_df['50-day MA'] = [len(moving_avg_df[moving_avg_df['50-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['50-day Distance'] >= 0])]
+above_below_df['150-day MA'] = [len(moving_avg_df[moving_avg_df['150-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['150-day Distance'] >= 0])]
+above_below_df['200-day MA'] = [len(moving_avg_df[moving_avg_df['200-day Distance'] < 0]), len(moving_avg_df[moving_avg_df['200-day Distance'] >= 0])]
+
 # Set the option to display all rows
 pd.set_option('display.max_rows', None)
 
@@ -57,14 +93,15 @@ app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div(children=[
-    html.H1('Stock Dashboard'),
-    
-    html.H2('Price Distance From Moving Averages'),
+    html.H1('Stock Dashboard', style={'textAlign': 'center'}),
+
+    html.H2('Moving Average Scanner', style={'textAlign': 'center'}),
+    html.H2('Price Distance From Moving Averages', style={'textAlign': 'center'}),
     dash_table.DataTable(
         id='moving-averages-table',
         columns=[{"name": col, "id": col} for col in moving_avg_df.columns],
         data=moving_avg_df.to_dict('records'),
-        style_cell={'textAlign': 'center'},
+        style_cell={'textAlign': 'center', 'padding': '5px'},
         style_data_conditional=[
             {
                 'if': {
@@ -74,7 +111,78 @@ app.layout = html.Div(children=[
                 'backgroundColor': 'red',
                 'color': 'white',
             },
-            # ... repeat the styling for other columns as needed
+            {
+                'if': {
+                    'column_id': '10-day Distance',
+                    'filter_query': '{10-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '20-day Distance',
+                    'filter_query': '{20-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '20-day Distance',
+                    'filter_query': '{20-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '50-day Distance',
+                    'filter_query': '{50-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '50-day Distance',
+                    'filter_query': '{50-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '150-day Distance',
+                    'filter_query': '{150-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '150-day Distance',
+                    'filter_query': '{150-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '200-day Distance',
+                    'filter_query': '{200-day Distance} < 0'
+                },
+                'backgroundColor': 'red',
+                'color': 'white',
+            },
+            {
+                'if': {
+                    'column_id': '200-day Distance',
+                    'filter_query': '{200-day Distance} >= 0'
+                },
+                'backgroundColor': 'green',
+                'color': 'white',
+            }
         ],
         sort_action='native',
         sort_mode='single',
@@ -87,20 +195,20 @@ app.layout = html.Div(children=[
         sort_as_null=True,
     ),
 
-    html.H2('Stocks Above and Below Moving Averages'),
+    html.H2('Stocks Above and Below Moving Averages', style={'textAlign': 'center'}),
     dash_table.DataTable(
         id='above-below-table',
         columns=[{"name": col, "id": col} for col in above_below_df.columns],
         data=above_below_df.to_dict('records'),
-        style_cell={'textAlign': 'center'},
+        style_cell={'textAlign': 'center', 'padding': '5px'},
     ),
-    
-    html.H2('Stock Data'),
+
+    html.H2('Stock Data', style={'textAlign': 'center'}),
     dash_table.DataTable(
         id='stock-data-table',
         columns=[{"name": col, "id": col} for col in highlighted_stocks_data.columns],
         data=highlighted_stocks_data.to_dict('records'),
-        style_cell={'textAlign': 'center'},
+        style_cell={'textAlign': 'center', 'padding': '5px'},
         style_data_conditional=highlighted_stocks_data.data,
     ),
 ])
