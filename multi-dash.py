@@ -26,11 +26,11 @@ latest_data = stock_data_df.groupby('Symbol').tail(1).round(2)
 moving_avg_df = latest_data[['Symbol', 'Open', 'High', 'Low', 'Close', '10-day MA', '20-day MA', '50-day MA', '150-day MA', '200-day MA']]
 
 # Calculate the distance from each average to the current price as a percentage
-moving_avg_df['10-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['10-day MA']) / moving_avg_df['Close'] * 100).round(2)
-moving_avg_df['20-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['20-day MA']) / moving_avg_df['Close'] * 100).round(2)
-moving_avg_df['50-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['50-day MA']) / moving_avg_df['Close'] * 100).round(2)
-moving_avg_df['150-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['150-day MA']) / moving_avg_df['Close'] * 100).round(2)
-moving_avg_df['200-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['200-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df.loc[:, '10-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['10-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df.loc[:, '20-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['20-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df.loc[:, '50-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['50-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df.loc[:, '150-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['150-day MA']) / moving_avg_df['Close'] * 100).round(2)
+moving_avg_df.loc[:, '200-day Distance'] = ((moving_avg_df['Close'] - moving_avg_df['200-day MA']) / moving_avg_df['Close'] * 100).round(2)
 
 above_below_df = pd.DataFrame(index=['Above', 'Below'])
 
