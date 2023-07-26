@@ -27,7 +27,7 @@ stock_symbols = ['ABCAPITAL', 'ABB', 'AARTIIND', 'ASIANPAINT', 'APOLLOTYRE', 'AB
 # Create the Dash app
 
 app = dash.Dash(__name__)
-
+server = app.server
 
 # Function to fetch data for each symbol
 def fetch_data(symbol):
