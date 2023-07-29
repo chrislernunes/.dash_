@@ -1,3 +1,24 @@
+# Created by Chrisler Nunes 
+# Date: 29th July 2023
+
+
+# Abstract:
+
+# The Stock Analytics Dashboard is a web application built using the Python framework, 
+# which provides a user-friendly interface to analyze stock . 
+# The dashboard consists of two main tabs: "Volume BuildUp Screener" and "Security Deliverable Data."
+
+#1: Volume Build Up Screener
+# In the "Volume BuildUp Screener" tab, users can view key stock metrics, such as Open, High, Low, Close, Volume, and percentage change, for a list of selected stocks. 
+# The app calculates various moving average volume values for each stock and highlights the volume values that cross specific averages in different colors. 
+# This feature helps users identify potential volume buildup or breakout scenarios more efficiently.
+
+#2: Security Deliverable Data
+# The "Security Deliverable Data" tab presents detailed deliverable data for a curated list of all FNO symbols. 
+# We wbescrape this data from nseindia (nselib api) archives under the "Security Deliverable Data" file and filter as per requirements.
+
+
+
 import dash
 from dash import html, dcc, dash_table
 import yfinance as yf
@@ -182,3 +203,4 @@ def render_content(tab):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
