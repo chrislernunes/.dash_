@@ -34,7 +34,7 @@ stock_symbols = ['ABCAPITAL.NS', 'ABB.NS', 'AARTIIND.NS', 'ASIANPAINT.NS', 'APOL
 stock_data_df = pd.DataFrame()
 
 for symbol in stock_symbols:
-    stock_data = yf.download(symbol, start='2022-06-01')
+    stock_data = yf.download(symbol, start='2022-10-01')
     stock_data["Symbol"] = symbol
     stock_data_df = pd.concat([stock_data_df, stock_data], ignore_index=True)
 
